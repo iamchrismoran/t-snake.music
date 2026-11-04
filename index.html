@@ -1,1 +1,344 @@
-The future home of t-snake.music
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#f2f0e9">
+	<meta name="description" content="T-Snake. Independent music and experiments in rhythm.">
+	<title>T-Snake / Sound in motion</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<style>
+		:root {
+			color-scheme: light;
+			--paper: #f2f0e9;
+			--ink: #171815;
+			--muted: #73746d;
+			--line: #c9c8bf;
+			--acid: #d3f25a;
+			--blue: #324fe0;
+			--red: #f45b43;
+			--mono: "DM Mono", monospace;
+			--display: "Space Grotesk", "Helvetica Neue", sans-serif;
+		}
+
+		* { box-sizing: border-box; }
+		html { scroll-behavior: smooth; }
+		body {
+			margin: 0;
+			background-color: var(--paper);
+			background-image: repeating-linear-gradient(0deg, transparent 0, transparent 39px, rgba(23, 24, 21, .035) 40px);
+			color: var(--ink);
+			font-family: var(--display);
+			-webkit-font-smoothing: antialiased;
+		}
+		button, a { color: inherit; font: inherit; }
+		button { cursor: pointer; }
+		a { text-decoration: none; }
+		.shell { max-width: 1440px; margin: 0 auto; padding: 0 5.2vw; }
+		.mono { font-family: var(--mono); text-transform: uppercase; letter-spacing: 0; }
+
+		.topbar {
+			height: 74px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			border-bottom: 1px solid var(--ink);
+			font-size: 12px;
+		}
+		.wordmark { font-weight: 700; font-size: 18px; letter-spacing: 0; }
+		.wordmark span { color: var(--blue); }
+		.nav { display: flex; align-items: center; gap: 34px; }
+		.nav a { transition: color .18s ease; }
+		.nav a:hover { color: var(--blue); }
+		.status { display: flex; align-items: center; gap: 9px; color: var(--muted); }
+		.status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--red); }
+
+		.hero {
+			min-height: 570px;
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) minmax(340px, .7fr);
+			align-items: center;
+			gap: 5vw;
+			padding: 62px 0 74px;
+		}
+		.eyebrow { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 11px; }
+		.eyebrow::before { content: ""; width: 28px; height: 1px; background: var(--blue); }
+		h1 {
+			margin: 28px 0 22px -6px;
+			font-size: clamp(76px, 12.5vw, 174px);
+			line-height: .78;
+			letter-spacing: 0;
+			font-weight: 700;
+		}
+		h1 span { display: block; color: var(--blue); }
+		.hero-copy { max-width: 390px; margin: 34px 0 0; color: #52534e; font-size: 16px; line-height: 1.55; }
+		.hero-index { margin-top: 40px; font-size: 11px; color: var(--muted); }
+
+		.player {
+			position: relative;
+			padding: 25px 26px 26px;
+			background: var(--ink);
+			color: var(--paper);
+			border: 1px solid var(--ink);
+			box-shadow: 9px 9px 0 var(--acid);
+			transform: rotate(1deg);
+		}
+		.player-head { display: flex; justify-content: space-between; align-items: center; padding-bottom: 19px; border-bottom: 1px solid #494a45; }
+		.player-kicker { font-size: 10px; color: #a7a89f; }
+		.live-tag { color: var(--acid); font-size: 10px; }
+		.track-title { margin: 25px 0 4px; font-size: 26px; font-weight: 600; }
+		.track-subtitle { color: #a7a89f; font-size: 12px; }
+		.visualizer { display: flex; height: 94px; align-items: center; justify-content: space-between; gap: 3px; margin: 18px 0 8px; overflow: hidden; }
+		.bar { flex: 1; min-width: 2px; height: var(--height); background: #555750; transform-origin: center; }
+		.player.is-playing .bar { background: var(--acid); animation: pulse var(--duration) ease-in-out infinite alternate; animation-delay: var(--delay); }
+		@keyframes pulse { from { transform: scaleY(.18); } to { transform: scaleY(1); } }
+		.progress-track { height: 2px; background: #555750; }
+		.progress-fill { width: 0; height: 100%; background: var(--acid); }
+		.player.is-playing .progress-fill { animation: progress 8s linear infinite; }
+		@keyframes progress { to { width: 100%; } }
+		.player-controls { display: flex; justify-content: space-between; align-items: center; padding-top: 20px; }
+		.play-button {
+			display: inline-flex;
+			align-items: center;
+			gap: 12px;
+			padding: 0;
+			border: 0;
+			background: none;
+			color: var(--paper);
+			font-weight: 600;
+			font-size: 13px;
+		}
+		.play-icon { display: grid; width: 40px; height: 40px; place-items: center; border-radius: 50%; background: var(--acid); color: var(--ink); font-size: 13px; }
+		.play-icon::before { content: "▶"; margin-left: 2px; }
+		.is-playing .play-icon::before { content: "Ⅱ"; margin-left: 0; }
+		.tempo { display: flex; align-items: center; gap: 8px; color: #a7a89f; font-size: 10px; }
+		.tempo button { width: 25px; height: 25px; border: 1px solid #555750; border-radius: 50%; background: transparent; color: var(--paper); }
+		.tempo-value { width: 42px; text-align: center; color: var(--paper); }
+
+		.section-label { display: flex; justify-content: space-between; padding: 18px 0; border-top: 1px solid var(--ink); font-size: 11px; }
+		.about {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 5vw;
+			padding: 48px 0 70px;
+		}
+		.about h2 { max-width: 420px; margin: 0; font-size: clamp(32px, 4vw, 54px); line-height: 1; font-weight: 500; }
+		.about-copy { max-width: 420px; color: #52534e; font-size: 15px; line-height: 1.7; }
+		.about-copy p { margin: 0 0 18px; }
+		.signal-mark { display: inline-block; padding: 2px 6px; background: var(--acid); color: var(--ink); }
+
+		footer { display: flex; justify-content: space-between; align-items: center; min-height: 72px; border-top: 1px solid var(--ink); color: var(--muted); font-size: 10px; }
+		footer a { color: var(--ink); }
+		footer a:hover { color: var(--blue); }
+
+		@media (max-width: 760px) {
+			.shell { padding: 0 22px; }
+			.topbar { height: 64px; }
+			.nav { gap: 18px; }
+			.nav a:nth-child(2) { display: none; }
+			.status { display: none; }
+			.hero { min-height: 0; grid-template-columns: 1fr; gap: 42px; padding: 66px 0 62px; }
+			h1 { margin-left: -3px; font-size: clamp(76px, 20vw, 140px); }
+			.hero-copy { margin-top: 28px; font-size: 15px; }
+			.hero-index { margin-top: 26px; }
+			.player { width: calc(100% - 9px); max-width: 490px; justify-self: center; padding: 21px; }
+			.about { grid-template-columns: 1fr; gap: 24px; padding: 34px 0 48px; }
+			.about h2 { max-width: 340px; }
+			footer { gap: 16px; }
+		}
+		@media (prefers-reduced-motion: reduce) {
+			*, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+		}
+	</style>
+</head>
+<body>
+	<header class="topbar shell">
+		<a class="wordmark" href="#top" aria-label="T-Snake home">T-SNAKE<span>.</span></a>
+		<nav class="nav mono" aria-label="Main navigation">
+			<a href="#signal">Signal</a>
+			<a href="#about">About</a>
+			<a href="mailto:hello@t-snake.music">Contact ↗</a>
+		</nav>
+		<div class="status mono"><span class="status-dot"></span>Transmission open</div>
+	</header>
+
+	<main id="top" class="shell">
+		<section class="hero" aria-labelledby="hero-title">
+			<div>
+				<div class="eyebrow mono">Independent sound / 001</div>
+				<h1 id="hero-title">T-<span>SNAKE</span></h1>
+				<p class="hero-copy">A little noise, a little instinct. Step inside the signal and make it move.</p>
+				<div class="hero-index mono">Experimental music · Always in motion</div>
+			</div>
+
+			<section id="signal" class="player" aria-label="Signal 001 beat demo">
+				<div class="player-head mono">
+					<span class="player-kicker">Signal / 001</span>
+					<span class="live-tag">● DEMO</span>
+				</div>
+				<h2 class="track-title">Night Circuit</h2>
+				<div class="track-subtitle mono">Browser-generated rhythm study</div>
+				<div class="visualizer" aria-hidden="true"></div>
+				<div class="progress-track" aria-hidden="true"><div class="progress-fill"></div></div>
+				<div class="player-controls">
+					<button class="play-button" type="button" aria-pressed="false">
+						<span class="play-icon" aria-hidden="true"></span><span class="play-label">Play signal</span>
+					</button>
+					<div class="tempo mono">
+						<span>TEMPO</span>
+						<button type="button" class="tempo-down" aria-label="Decrease tempo">−</button>
+						<span class="tempo-value" aria-live="polite">110 BPM</span>
+						<button type="button" class="tempo-up" aria-label="Increase tempo">+</button>
+					</div>
+				</div>
+			</section>
+		</section>
+
+		<div class="section-label mono"><span>01 — The approach</span><span>Sound in motion ↘</span></div>
+		<section id="about" class="about" aria-labelledby="about-title">
+			<h2 id="about-title">Built from instinct.<br>Left a little rough.</h2>
+			<div class="about-copy">
+				<p>T-Snake is a home for independent sounds, unexpected rhythms, and ideas still finding their shape.</p>
+				<p>This first signal is a small browser-made rhythm study. Turn it up, slow it down, see where it goes.</p>
+				<span class="signal-mark mono">More soon</span>
+			</div>
+		</section>
+	</main>
+
+	<footer class="shell mono">
+		<span>© T-Snake · 2026</span>
+		<a href="mailto:hello@t-snake.music">Say hello ↗</a>
+		<span>v0.001</span>
+	</footer>
+
+	<script>
+		const player = document.querySelector('.player');
+		const playButton = document.querySelector('.play-button');
+		const playLabel = document.querySelector('.play-label');
+		const tempoValue = document.querySelector('.tempo-value');
+		const visualizer = document.querySelector('.visualizer');
+		const stepDuration = 60 / 110 / 4;
+		let tempo = 110;
+		let audioContext;
+		let scheduler;
+		let step = 0;
+		let nextNoteTime = 0;
+		let playing = false;
+
+		for (let index = 0; index < 44; index += 1) {
+			const bar = document.createElement('span');
+			bar.className = 'bar';
+			bar.style.setProperty('--height', `${16 + Math.abs(Math.sin(index * 2.17)) * 78}px`);
+			bar.style.setProperty('--delay', `${(index % 9) * -0.13}s`);
+			bar.style.setProperty('--duration', `${0.3 + (index % 5) * 0.11}s`);
+			visualizer.append(bar);
+		}
+
+		function kick(time) {
+			const oscillator = audioContext.createOscillator();
+			const gain = audioContext.createGain();
+			oscillator.type = 'sine';
+			oscillator.frequency.setValueAtTime(130, time);
+			oscillator.frequency.exponentialRampToValueAtTime(42, time + 0.14);
+			gain.gain.setValueAtTime(0.75, time);
+			gain.gain.exponentialRampToValueAtTime(0.001, time + 0.2);
+			oscillator.connect(gain).connect(audioContext.destination);
+			oscillator.start(time);
+			oscillator.stop(time + 0.21);
+		}
+
+		function hat(time, accent = false) {
+			const buffer = audioContext.createBuffer(1, audioContext.sampleRate * 0.045, audioContext.sampleRate);
+			const data = buffer.getChannelData(0);
+			for (let index = 0; index < data.length; index += 1) data[index] = Math.random() * 2 - 1;
+			const source = audioContext.createBufferSource();
+			const filter = audioContext.createBiquadFilter();
+			const gain = audioContext.createGain();
+			source.buffer = buffer;
+			filter.type = 'highpass';
+			filter.frequency.value = 7800;
+			gain.gain.setValueAtTime(accent ? 0.13 : 0.065, time);
+			gain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+			source.connect(filter).connect(gain).connect(audioContext.destination);
+			source.start(time);
+		}
+
+		function snare(time) {
+			const buffer = audioContext.createBuffer(1, audioContext.sampleRate * 0.12, audioContext.sampleRate);
+			const data = buffer.getChannelData(0);
+			for (let index = 0; index < data.length; index += 1) data[index] = Math.random() * 2 - 1;
+			const source = audioContext.createBufferSource();
+			const filter = audioContext.createBiquadFilter();
+			const gain = audioContext.createGain();
+			source.buffer = buffer;
+			filter.type = 'bandpass';
+			filter.frequency.value = 1900;
+			gain.gain.setValueAtTime(0.24, time);
+			gain.gain.exponentialRampToValueAtTime(0.001, time + 0.11);
+			source.connect(filter).connect(gain).connect(audioContext.destination);
+			source.start(time);
+		}
+
+		function bass(time, note) {
+			const oscillator = audioContext.createOscillator();
+			const gain = audioContext.createGain();
+			oscillator.type = 'triangle';
+			oscillator.frequency.value = note;
+			gain.gain.setValueAtTime(0.17, time);
+			gain.gain.exponentialRampToValueAtTime(0.001, time + 0.16);
+			oscillator.connect(gain).connect(audioContext.destination);
+			oscillator.start(time);
+			oscillator.stop(time + 0.17);
+		}
+
+		function scheduleStep(time) {
+			const position = step % 16;
+			if (position === 0 || position === 6 || position === 10) kick(time);
+			if (position === 4 || position === 12) snare(time);
+			if (position % 2 === 0) hat(time, position % 4 === 0);
+			if ([0, 3, 7, 10, 14].includes(position)) bass(time, [55, 55, 65.4, 73.4, 65.4][[0, 3, 7, 10, 14].indexOf(position)]);
+			step += 1;
+		}
+
+		function tick() {
+			while (nextNoteTime < audioContext.currentTime + 0.1) {
+				scheduleStep(nextNoteTime);
+				nextNoteTime += 60 / tempo / 4;
+			}
+		}
+
+		async function togglePlayback() {
+			if (playing) {
+				window.clearInterval(scheduler);
+				playing = false;
+				player.classList.remove('is-playing');
+				playButton.setAttribute('aria-pressed', 'false');
+				playLabel.textContent = 'Play signal';
+				return;
+			}
+			audioContext ??= new AudioContext();
+			await audioContext.resume();
+			playing = true;
+			step = 0;
+			nextNoteTime = audioContext.currentTime;
+			tick();
+			scheduler = window.setInterval(tick, 25);
+			player.classList.add('is-playing');
+			playButton.setAttribute('aria-pressed', 'true');
+			playLabel.textContent = 'Pause signal';
+		}
+
+		playButton.addEventListener('click', togglePlayback);
+		document.querySelector('.tempo-down').addEventListener('click', () => {
+			tempo = Math.max(70, tempo - 5);
+			tempoValue.textContent = `${tempo} BPM`;
+		});
+		document.querySelector('.tempo-up').addEventListener('click', () => {
+			tempo = Math.min(150, tempo + 5);
+			tempoValue.textContent = `${tempo} BPM`;
+		});
+	</script>
+</body>
+</html>
